@@ -1,0 +1,34 @@
+version = "1.0"
+
+[task]
+name = "benchmark/raft-consensus-cluster-matrix"
+description = "Implement and debug an endian-safe, crash-consistent Raft distributed consensus protocol with custom binary RPC framing across a 1,000-state adversarial network partition matrix."
+difficulty = "hard"
+category = "distributed-systems"
+timeout_sec = 2700
+allow_internet = false
+tags = ["distributed-systems", "consensus", "raft", "network-partitions", "binary-rpc", "fault-tolerance", "long-horizon"]
+
+[task.difficulty_explanation]
+provenance = "Synthetic 1,000-state combinatorial matrix inspired by standard architectural design patterns in distributed consensus protocols."
+differentiation_notes = "This task combines: (1) custom binary RPC wire framing with explicit magic headers and CRC-8 frame verification; (2) deterministic discrete network simulation with asymmetric split-brain partition matrices; (3) strict leader election and log reconciliation invariants (overwriting uncommitted log entries on term conflicts); (4) an explicit node lifecycle state machine (FOLLOWER/CANDIDATE/LEADER/STOPPED) with enforced state guards; (5) an AST anti-cheat layer blocking external network and database libraries; and (6) a 1,000-case combinatorial test matrix verifying consensus stability across variable network delays, drop rates, and term churn."
+relevance = "Evaluates low-level distributed systems programming, binary network protocols, and fault-tolerant replicated state machines."
+failure_cruxes = [
+    "Stale leader split-brain writes during asymmetric network partition healing.",
+    "Log divergence reconciliation when a reconnected node attempts to append conflicting historical terms.",
+    "Binary RPC frame truncation handling where partial network packets must be safely rejected without desynchronizing state."
+]
+
+[scoring]
+type = "continuous"
+min_score = 0.0
+max_score = 1.0
+pass_threshold = 0.50
+
+[hardware]
+cpu = 2
+memory_mb = 2048
+
+[environment]
+image = "python:3.11-slim"
+workdir = "/app"
